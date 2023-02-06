@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.trackdynamics.entity.User;
 import lombok.*;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -17,6 +20,8 @@ import java.time.LocalDateTime;
 
 public class TaskDTO {
     private Integer id;
+    @Size(min = 2, max = 80, message = "title must be between 2 and 80 characters")
+    @NotNull(message = "Title can not be null")
     private String title;
     private String description;
     private LocalDate deadline;
