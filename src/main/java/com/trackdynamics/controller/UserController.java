@@ -8,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +26,15 @@ public class UserController {
     private UserMapper userMapper;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody UserDTO userDTO) {  //DTO trafega a info do objeto entre camadas do sistema.
-        User user = userMapper.convertUserDTOtoUser(userDTO);
-        user = userService.saveUser(user);
-        log.info("Mostrar user convertido {}", user);
-        return ResponseEntity.of(Optional.of(userMapper.convertUsertoUserDTO(user)));
+    public ResponseEntity<?> save(@RequestBody @Valid UserDTO userDTO) {  //DTO trafega a info do objeto entre camadas do sistema.
+        try{
+            User user = userMapper.convertUserDTOtoUser(userDTO);
+            user = userService.saveUser(user);
+            log.info("Mostrar user convertido {}", user);
+            return ResponseEntity.of(Optional.of(userMapper.convertUsertoUserDTO(user)));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -66,11 +72,15 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateUser(@RequestBody UserDTO userDTO) {
-        User user = userMapper.convertUserDTOtoUser(userDTO);
-        user = userService.saveUser(user);
-        log.info("Mostrar user convertido {}", user);
-        return ResponseEntity.of(Optional.of(userMapper.convertUsertoUserDTO(user)));
+    public ResponseEntity<?> updateUser(@RequestBody @Valid UserDTO userDTO){
+        try {
+            User user = userMapper.convertUserDTOtoUser(userDTO);
+            user = userService.saveUser(user);
+            log.info("Mostrar user convertido {}", user);
+            return ResponseEntity.of(Optional.of(userMapper.convertUsertoUserDTO(user)));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
+        }
     }
 /*
     TODO
